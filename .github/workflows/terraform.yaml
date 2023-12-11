@@ -75,7 +75,7 @@ jobs:
         id: init
         run: |
           cd ${{ env.terraformWorkDir }}
-          terraform init -backend-config="bucket=${{ env.terraformBucket }}" -backend-config="dynamodb_table=${{ env.terraformDynamo }}" -backend-config="key=${{ env.terraformS3Key}}" -backend-config="region=${{ env.awsRegion }}" -backend-config="acl=${{ env.terraformS3Acl }}" -backend-config="encryption=${{ env.terraformS3Encryption }}"
+          terraform init -backend-config="bucket=${{ env.terraformBucket }}" -backend-config="dynamodb_table=${{ env.terraformDynamo }}" -backend-config="key=${{ env.terraformS3Key}}" -backend-config="region=${{ env.awsRegion }}" -backend-config="acl=${{ env.terraformS3Acl }}" -backend-config="encrypt=${{ env.terraformS3Encryption }}"
 
       - name: Terraform Format
         run: terraform fmt --check
@@ -168,7 +168,7 @@ jobs:
         id: init
         run: |
           cd ${{ env.terraformWorkDir }}
-          terraform init -backend-config="bucket=${{ env.terraformBucket }}" -backend-config="dynamodb_table=${{ env.terraformDynamo }}" -backend-config="key=${{ env.terraformS3Key}}" -backend-config="region=${{ env.awsRegion }}" -backend-config="acl=${{ env.terraformS3Acl }}" -backend-config="encryption=${{ env.terraformS3Encryption }}"
+          terraform init -backend-config="bucket=${{ env.terraformBucket }}" -backend-config="dynamodb_table=${{ env.terraformDynamo }}" -backend-config="key=${{ env.terraformS3Key}}" -backend-config="region=${{ env.awsRegion }}" -backend-config="acl=${{ env.terraformS3Acl }}" -backend-config="encrypt=${{ env.terraformS3Encryption }}"
 
 
       - name: Terraform Plans
