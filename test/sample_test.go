@@ -17,7 +17,7 @@ func TestTerraformExample(t *testing.T) {
 		// Set the path to the Terraform code that will be tested.
 		TerraformDir: "../examples/resource",
 
-		Lock: false,
+		Lock: true,
 		BackendConfig: map[string]interface{}{
 			"bucket":         "adex-terraform-state",
 			"key":            terraformStateKey,
