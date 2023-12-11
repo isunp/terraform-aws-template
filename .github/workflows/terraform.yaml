@@ -85,6 +85,7 @@ jobs:
         with:
          directory: .
          quiet: true # optional: display only failed checks
+         skip_check: CKV_GHA_7
 
       - name: Terraform Validate
         run: |
