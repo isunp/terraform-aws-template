@@ -17,12 +17,15 @@ func TestTerraformExample(t *testing.T) {
 		// Set the path to the Terraform code that will be tested.
 		TerraformDir: "../examples/resource",
 
-		Lock: true,
+		Lock: false,
 		BackendConfig: map[string]interface{}{
-			"bucket":         "terraform-module-state-files",
+			"bucket":         "adex-terraform-state",
 			"key":            terraformStateKey,
 			"region":         "us-east-1",
-			"dynamodb_table": "terraform-module-state-files",
+			"dynamodb_table": "adex-terraform-state",
+			"acl":            "bucket-owner-full-control",
+            "encrypt":         true,
+
 		},
 	})
 
