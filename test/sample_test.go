@@ -19,12 +19,12 @@ func TestTerraformExample(t *testing.T) {
 
 		Lock: true,
 		BackendConfig: map[string]interface{}{
-			"bucket":         "adex-terraform-state",
-			"key":            terraformStateKey,
-			"region":         "us-east-1",
+			"bucket"        : "adex-terraform-state",
+			"key"           :  terraformStateKey,
+			"region"        : "us-east-1",
 			"dynamodb_table": "adex-terraform-state",
-			"acl":            "bucket-owner-full-control",
-            "encrypt":         true,
+			"acl"           : "bucket-owner-full-control",
+            "encrypt"       :  true,
 
 		},
 	})
