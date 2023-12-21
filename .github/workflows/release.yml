@@ -2,6 +2,7 @@ name: Tag and Release
 
 on:
   workflow_dispatch:
+    #checkov:skip=CKV_GHA_7:GitHub Actions workflow_dispatch inputs MUST NOT be empty.
     inputs:
       tag_name:
         description: "New Tag version"
