@@ -43,7 +43,6 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-
       - name: Check out code
         uses: actions/checkout@v3
 
@@ -145,6 +144,29 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v3
+
+      - name: Setup SonarQube scanner
+        uses: warchant/setup-sonar-scanner@v7
+
+      - name: SonarQube Scanner-project properties file
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=${{ github.event.repository.name }} \
+            -Dsonar.projectVersion=${GITHUB_REF#refs/heads/}-${{ github.run_number }} \
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        #need to create a global token for sonarqube scanning
+
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+
+      - name: "Example show SonarQube Quality Gate Status value"
+        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }} link:"${{ env.SONAR_HOST_URL }}/dashboard?id=${{ github.event.repository.name }}" "
 
       - name: Setup git repo credentials for terraform modules
         run: |
