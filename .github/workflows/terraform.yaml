@@ -31,7 +31,6 @@ env:
   terraformDynamo: adex-terraform-state
   terraformS3Acl: bucket-owner-full-control
   SONAR_HOST_URL: https://sonarqube.internal.adex.ltd
-  SONAR_TOKEN: sqa_5e9257c2698ab928c3ec4a54bf65d61bc44ce455
   terraformS3Encryption: true
 
   awsRegion: us-east-1
@@ -259,8 +258,8 @@ jobs:
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
 
-      - name: "Example show SonarQube Quality Gate Status value"
+      - name: "how SonarQube Quality Gate Status value"
         run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }} link:"${{ env.SONAR_HOST_URL }}/dashboard?id=${{ github.event.repository.name }}" "
