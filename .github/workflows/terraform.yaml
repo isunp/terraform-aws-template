@@ -30,6 +30,8 @@ env:
   terraformBucket: adex-terraform-state
   terraformDynamo: adex-terraform-state
   terraformS3Acl: bucket-owner-full-control
+  SONAR_HOST_URL: https://sonarqube.internal.adex.ltd
+  SONAR_TOKEN: sqa_5e9257c2698ab928c3ec4a54bf65d61bc44ce455
   terraformS3Encryption: true
 
   awsRegion: us-east-1
@@ -145,29 +147,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Setup SonarQube scanner
-        uses: warchant/setup-sonar-scanner@v7
-
-      - name: SonarQube Scanner-project properties file
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=${{ github.event.repository.name }} \
-            -Dsonar.projectVersion=${GITHUB_REF#refs/heads/}-${{ github.run_number }} \
-            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-        #need to create a global token for sonarqube scanning
-
-      - name: SonarQube Quality Gate check
-        id: sonarqube-quality-gate-check
-        uses: sonarsource/sonarqube-quality-gate-action@master
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
-
-      - name: "Example show SonarQube Quality Gate Status value"
-        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }} link:"${{ env.SONAR_HOST_URL }}/dashboard?id=${{ github.event.repository.name }}" "
-
       - name: Setup git repo credentials for terraform modules
         run: |
           git config --global \
@@ -258,3 +237,30 @@ jobs:
       - name: Stop pipeline if failed
         if: steps.plan.outcome == 'failure'
         run: exit 1
+  scan:
+    name: Sonarqube Scan
+    needs: plan
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Setup SonarQube scanner
+        uses: warchant/setup-sonar-scanner@v7
+
+      - name: SonarQube Scanner-project properties file
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=${{ github.event.repository.name }} \
+            -Dsonar.projectVersion=${GITHUB_REF#refs/heads/}-${{ github.run_number }} \
+            -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+
+      - name: "Example show SonarQube Quality Gate Status value"
+        run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }} link:"${{ env.SONAR_HOST_URL }}/dashboard?id=${{ github.event.repository.name }}" "
