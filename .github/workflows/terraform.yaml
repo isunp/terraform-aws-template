@@ -236,12 +236,13 @@ jobs:
       - name: Stop pipeline if failed
         if: steps.plan.outcome == 'failure'
         run: exit 1
-  scan:
-    name: Sonarqube Scan
-    needs: plan
-    runs-on: ubuntu-20.04
 
+  sonarqube_scan:
+    runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Setup SonarQube scanner
         uses: warchant/setup-sonar-scanner@v7
 
@@ -249,7 +250,7 @@ jobs:
         run: |
           sonar-scanner \
             -Dsonar.projectKey=${{ github.event.repository.name }} \
-            -Dsonar.projectVersion=${GITHUB_REF#refs/heads/}-${{ github.run_number }} \
+            -Dsonar.projectVersion=${{ github.run_number }}-${GITHUB_REF#refs/heads/} \
             -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
@@ -261,5 +262,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
 
-      - name: "how SonarQube Quality Gate Status value"
+
+      - name: "show SonarQube Quality Gate Status value"
         run: echo "The Quality Gate status is ${{ steps.sonarqube-quality-gate-check.outputs.quality-gate-status }} link:"${{ env.SONAR_HOST_URL }}/dashboard?id=${{ github.event.repository.name }}" "
