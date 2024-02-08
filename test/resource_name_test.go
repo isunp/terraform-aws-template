@@ -15,7 +15,7 @@ func TestTerraformExample(t *testing.T) {
 
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		// Set the path to the Terraform code that will be tested.
-		TerraformDir: "../examples/resource",
+		TerraformDir: "../examples/complete",
 
 		Lock: true,
 		BackendConfig: map[string]interface{}{
