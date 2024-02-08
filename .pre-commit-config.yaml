@@ -36,7 +36,7 @@ repos:
       - id: terraform_fmt
       - id: terraform_providers_lock
       - id: terraform_checkov
-      - id: terraform_tfsec
+      - id: terraform_trivy
       - id: terraform_validate
       - id: terraform_tflint
       - id: infracost_breakdown
