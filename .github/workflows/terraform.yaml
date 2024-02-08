@@ -24,7 +24,7 @@ permissions:
 
 env:
   terraformVersion: 1.3.6
-  terraformWorkDir: ./examples/resource
+  terraformWorkDir: ./examples/complete
   terraformS3Key: ${{ secrets.ADEX_POC }}/${{ github.repository}}/${{ github.ref_name}}
   terraformModulesGithubOrg: ${{ github.repository_owner}}
   terraformBucket: adex-terraform-state
@@ -193,13 +193,12 @@ jobs:
           cd ${{ env.terraformWorkDir }}
           terraform init -backend-config="bucket=${{ env.terraformBucket }}" -backend-config="dynamodb_table=${{ env.terraformDynamo }}" -backend-config="key=${{ env.terraformS3Key}}" -backend-config="region=${{ env.awsRegion }}" -backend-config="acl=${{ env.terraformS3Acl }}" -backend-config="encrypt=${{ env.terraformS3Encryption }}"
 
-
       - name: Terraform Plans
         id: plan
         continue-on-error: true
         run: |
           cd ${{ env.terraformWorkDir }}
-          terraform plan -no-color -out tf.plan
+          terraform plan -var-file=dev.tfvars -no-color -out tf.plan
 
       - name: Upload Terraform Plan File
         if: steps.plan.outcome == 'success' && github.event_name == 'pull_request'
@@ -219,7 +218,6 @@ jobs:
           echo "PLAN<<EOF" >> $GITHUB_ENV
           echo "$PLAN" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-
 
       - name: Post Plan to GitHub PR
         if: steps.plan.outcome == 'success' && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main')
