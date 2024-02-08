@@ -7,10 +7,10 @@ provider "aws" {
   # Default tags (Global tags) applies to all resources created by this provider
   default_tags {
     tags = {
-      project   = "eks-demo"
-      terraform = true
-      silo      = "k8's"
-      owner     = "tej"
+      project   = var.project
+      terraform = var.terraform
+      silo      = var.silo
+      owner     = var.owner
     }
   }
 }

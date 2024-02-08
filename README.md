@@ -45,7 +45,7 @@ Our organization sets the best practices for creating the terraform template mod
 * [`checkov`](https://github.com/bridgecrewio/checkov) required for `checkov` hook.
 * [`terraform-docs`](https://github.com/terraform-docs/terraform-docs) required for `terraform_docs` hook.
 * [`TFLint`](https://github.com/terraform-linters/tflint) required for `terraform_tflint` hook.
-* [`TFSec`](https://github.com/liamg/tfsec) required for `terraform_tfsec` hook.
+* [`Trivy`](https://github.com/aquasecurity/trivy) required for `terraform_trivy` hook.
 * [`infracost`](https://github.com/infracost/infracost) required for `infracost_breakdown` hook.
 * [`jq`](https://github.com/stedolan/jq) required for `terraform_validate` with `--retry-once-with-cleanup` flag, and for `infracost_breakdown` hook.
 
@@ -53,7 +53,7 @@ Our organization sets the best practices for creating the terraform template mod
 <details><summary><b>MacOS/Linux</b></summary><br>
 
 ```bash
-brew install pre-commit terraform-docs tflint tfsec checkov infracost jq
+brew install pre-commit terraform-docs tflint trivy checkov infracost jq
 ```
 </details>
 
@@ -69,7 +69,7 @@ pip3 install --no-cache-dir pre-commit
 pip3 install --no-cache-dir checkov
 curl -L "$(curl -s https://api.github.com/repos/terraform-docs/terraform-docs/releases/latest | grep -o -E -m 1 "https://.+?-linux-amd64.tar.gz")" > terraform-docs.tgz && tar -xzf terraform-docs.tgz terraform-docs && rm terraform-docs.tgz && chmod +x terraform-docs && sudo mv terraform-docs /usr/bin/
 curl -L "$(curl -s https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E -m 1 "https://.+?_linux_amd64.zip")" > tflint.zip && unzip tflint.zip && rm tflint.zip && sudo mv tflint /usr/bin/
-curl -L "$(curl -s https://api.github.com/repos/aquasecurity/tfsec/releases/latest | grep -o -E -m 1 "https://.+?tfsec-linux-amd64")" > tfsec && chmod +x tfsec && sudo mv tfsec /usr/bin/
+curl -L "$(curl -s https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep -o -E -i -m 1 "https://.+?/trivy_.+?_Linux-64bit.tar.gz")" > trivy.tar.gz && tar -xzf trivy.tar.gz trivy && rm trivy.tar.gz && sudo mv trivy /usr/bin
 sudo apt install -y jq && \
 curl -L "$(curl -s https://api.github.com/repos/infracost/infracost/releases/latest | grep -o -E -m 1 "https://.+?-linux-amd64.tar.gz")" > infracost.tgz && tar -xzf infracost.tgz && rm infracost.tgz && sudo mv infracost-linux-amd64 /usr/bin/infracost && infracost register
 ```
@@ -146,7 +146,7 @@ There are several [pre-commit](https://pre-commit.com/) hooks to keep Terraform 
 | `terraform_fmt`                                        | Reformat all Terraform configuration files to a canonical format. [Hook notes](#terraform_fmt)                                                                                                                                               | -                                                                                    |
 | `terraform_providers_lock`                             | Updates provider signatures in [dependency lock files](https://www.terraform.io/docs/cli/commands/providers/lock.html). [Hook notes](#terraform_providers_lock)                                                                              | -                                                                                    |
 | `terraform_tflint`                                     | Validates all Terraform configuration files with [TFLint](https://github.com/terraform-linters/tflint). [Available TFLint rules](https://github.com/terraform-linters/tflint/tree/master/docs/rules#rules). [Hook notes](#terraform_tflint). | `tflint`                                                                             |
-| `terraform_tfsec`                                      | [TFSec](https://github.com/aquasecurity/tfsec) static analysis of terraform templates to spot potential security issues. [Hook notes](#terraform_tfsec)                                                                                      | `tfsec`                                                                              |
+| `terraform_trivy`                                      | [Trivy](https://github.com/aquasecurity/trivy) static analysis of terraform templates to spot potential security issues. [Hook notes](#terraform_trivy)                                                                                      | `trivy`                                                                             |
 | `terraform_validate`                                   | Validates all Terraform configuration files. [Hook notes](#terraform_validate)                                                                                                                                                               | `jq`, only for `--retry-once-with-cleanup` flag                                      |
 
 <!-- markdownlint-enable no-inline-html -->
@@ -275,9 +275,9 @@ git merge --continue
           args:
             - --hook-config=--delegate-chdir
 
-### TFsec
+### Terraform_trivy
 
-1. `terraform_tfsec` will consume modified files that pre-commit
+1. `terraform_trivy` will consume modified files that pre-commit
     passes to it, so you can perform whitelisting of directories
     or files to run against via [files](https://pre-commit.com/#config-files)
     pre-commit flag
@@ -285,51 +285,36 @@ git merge --continue
     Example:
 
     ```yaml
-    - id: terraform_tfsec
+    - id: terraform_trivy
       files: ^prd-infra/
     ```
 
     The above will tell pre-commit to pass down files from the `prd-infra/` folder
-    only such that the underlying `tfsec` tool can run against changed files in this
+    only such that the underlying `trivy` tool can run against changed files in this
     directory, ignoring any other folders at the root level
 
 2. To ignore specific warnings, follow the convention from the
-[documentation](https://github.com/aquasecurity/tfsec#ignoring-warnings).
+[documentation](https://aquasecurity.github.io/trivy/latest/docs/configuration/filtering/).
 
     Example:
 
     ```hcl
+    #trivy:ignore:AVD-AWS-0107
+    #trivy:ignore:AVD-AWS-0124
     resource "aws_security_group_rule" "my-rule" {
         type = "ingress"
-        cidr_blocks = ["0.0.0.0/0"] #tfsec:ignore:AWS006
+        cidr_blocks = ["0.0.0.0/0"]
     }
     ```
 
-3. `terraform_tfsec` supports custom arguments, so you can pass supported `--no-color` or `--format` (output), `-e` (exclude checks) flags:
+3. `terraform_trivy` supports custom arguments, so you can pass supported `--format` (output), `--skip-dirs` (exclude directories) and other flags:
 
     ```yaml
-     - id: terraform_tfsec
+     - id: terraform_trivy
        args:
          - >
            --args=--format json
-           --no-color
-           -e aws-s3-enable-bucket-logging,aws-s3-specify-public-access-block
-    ```
-
-4. When you have multiple directories and want to run `tfsec` in all of them and share a single config file - use the `__GIT_WORKING_DIR__` placeholder. It will be replaced by `terraform_tfsec` hooks with Git working directory (repo root) at run time. For example:
-
-    ```yaml
-    - id: terraform_tfsec
-      args:
-        - --args=--config-file=__GIT_WORKING_DIR__/.tfsec.json
-    ```
-
-    Otherwise, will be used files that located in sub-folders:
-
-    ```yaml
-    - id: terraform_tfsec
-      args:
-        - --args=--config-file=.tfsec.json
+           --skip-dirs="**/.terragrunt-cache"
     ```
 
 ### Infracost_breakdown
@@ -454,7 +439,7 @@ The `lint` job has several steps:
 3. Installs `JQ` and sets up the `AWS credentials`
 4. Set up the github repo credentials for the terraform modules
 3. Initialize Terraform, perform a security scan with Checkov, and validate Terraform configurations with `terraform validate -no-color`.
-4. Run `tfsec` for a security scan.
+4. Run `trivy` for a security scan.
 7. Sets up `Sonarqube` Runs the `SonarQube scanning` and `Sonar quality gate check`
 6. Runs the end to end `terratest`
 5. Set up `infracost` generate the cost from the `/examples/complete` dirs and post the comments in the PR and Lso compares with the previously generated cost and update the cost if any
@@ -473,4 +458,4 @@ The `plan_or_apply` job has several steps:
 6. If the apply is successful, post the apply output to the GitHub PR.
 7. If the apply fails, post the apply output to the GitHub PR.
 
-This workflow incorporates Terraform, Checkov, tfsec, and Infracost to validate, scan, and estimate the cost of infrastructure changes before being merged.
+This workflow incorporates Terraform, Checkov, trivy, and Infracost to validate, scan, and estimate the cost of infrastructure changes before being merged.

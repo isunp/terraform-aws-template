@@ -11,13 +11,13 @@ variable "region" {
 variable "project" {
   description = "Name to be used on all the resources as identifier"
   type        = string
-  default     = ""
+  default     = "teraform_modules"
 }
 
 variable "terraform" {
   description = "Name to be used on all the resources as identifier"
   type        = bool
-  default     = "true"
+  default     = true
 }
 
 

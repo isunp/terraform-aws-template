@@ -7,9 +7,3 @@ variable "region" {
   type        = string
   default     = "us-east-1"
 }
-
-variable "owner" {
-  description = "Name to be used on all the resources as identifier"
-  type        = string
-  default     = ""
-}

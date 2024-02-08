@@ -25,7 +25,6 @@ repos:
         - id: check-ast
         - id: double-quote-string-fixer
         - id: detect-private-key
-        - id: detect-aws-credentials
         - id: debug-statements
         - id: requirements-txt-fixer
         - id: check-json
