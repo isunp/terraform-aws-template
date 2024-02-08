@@ -1,7 +1,7 @@
 ################################################################################
-# Defines the resources provider
+# Defines and manages the terraform backend state
 ################################################################################
-
-provider "aws" {
-  region = var.region
+terraform {
+  backend "s3" {
   }
+}

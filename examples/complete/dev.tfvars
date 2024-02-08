@@ -1,7 +1,10 @@
 ################################################################################
-# Defines the resources provider
+# Defines the terraform initalization variables
 ################################################################################
 
-provider "aws" {
-  region = var.region
-  }
+region = "us-east-1"
+project = "terraform_modules"
+terraform = true
+environment = "dev"
+silo = "k8's"
+owner = "tej"
