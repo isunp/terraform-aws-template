@@ -3,7 +3,7 @@
 Terraform default template module is a useful starting point for those who frequently use Terraform for their projects. Its pre-written required files and format of code saves time and effort and provides a consistent structure for all Terraform projects.
 
 Our organization sets the best practices for creating the terraform template module. The following are the standards that should be followed by the team members and contributors
-## Best Practices 
+## Best Practices
 - use root folders `.tf` configuration files to create only resources or call sub- modules
 - To use the pre-commit tests and other tests please follow the below installation and usages manual
 - Terraform tests are created using `terratest` look into the terratest section for the more info
@@ -18,7 +18,7 @@ Our organization sets the best practices for creating the terraform template mod
 
 1. Clone the repository.
 2. Move to the `examples/complete` directory.
-3. Configure the `backend` for your state with inside `backend.tf` 
+3. Configure the `backend` for your state with inside `backend.tf`
 3. Run `terraform init` to initialize the provider and modules.
 4. Create a `dev.tfvars` file and fill in the required variables.
 5. Run `terraform plan` to see the changes that will be made.
@@ -142,7 +142,7 @@ There are several [pre-commit](https://pre-commit.com/) hooks to keep Terraform 
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `checkov` and `terraform_checkov`                      | [checkov](https://github.com/bridgecrewio/checkov) static analysis of terraform templates to spot potential security issues. [Hook notes](#checkov-deprecated-and-terraform_checkov)                                                         | `checkov`<br>Ubuntu deps: `python3`, `python3-pip`                                   |
 | `infracost_breakdown`                                  | Check how much your infra costs with [infracost](https://github.com/infracost/infracost). [Hook notes](#infracost_breakdown)                                                                                                                 | `infracost`, `jq`, [Infracost API key](https://www.infracost.io/docs/#2-get-api-key) |
-| `terraform_docs`                                       | Inserts input and output documentation into `README.md`. Recommended. [Hook notes](#terraform_docs)                                                                                                                                          | `terraform-docs`                                                             
+| `terraform_docs`                                       | Inserts input and output documentation into `README.md`. Recommended. [Hook notes](#terraform_docs)                                                                                                                                          | `terraform-docs`
 | `terraform_fmt`                                        | Reformat all Terraform configuration files to a canonical format. [Hook notes](#terraform_fmt)                                                                                                                                               | -                                                                                    |
 | `terraform_providers_lock`                             | Updates provider signatures in [dependency lock files](https://www.terraform.io/docs/cli/commands/providers/lock.html). [Hook notes](#terraform_providers_lock)                                                                              | -                                                                                    |
 | `terraform_tflint`                                     | Validates all Terraform configuration files with [TFLint](https://github.com/terraform-linters/tflint). [Available TFLint rules](https://github.com/terraform-linters/tflint/tree/master/docs/rules#rules). [Hook notes](#terraform_tflint). | `tflint`                                                                             |
@@ -419,7 +419,7 @@ Unlike most other hooks, this hook triggers once if there are any changed files 
 
 ## Testing is done with terratest in GOLANG
 TEST: `/test/resource_name_test.go`
- > This code defines a test function to test a Terraform module using the Terratest library. 
+ > This code defines a test function to test a Terraform module using the Terratest library.
  The test function first constructs the Terraform options with default retryable errors to handle the most common retryable errors in Terraform testing.
 
 1. Create test folder.
@@ -427,7 +427,7 @@ TEST: `/test/resource_name_test.go`
 3. create you test file with name ending `_test.go`
 4. To configure dependencies,
  ```bash
- run: | 
+ run: |
   cd test
   go mod init "<_test.go>"
   go mod tidy
@@ -452,7 +452,7 @@ The `lint` job has several steps:
 1. Check out the code.
 2. Set up Terraform and run `terraform fmt --check`.
 3. Installs `JQ` and sets up the `AWS credentials`
-4. Set up the github repo credentials for the terraform modules  
+4. Set up the github repo credentials for the terraform modules
 3. Initialize Terraform, perform a security scan with Checkov, and validate Terraform configurations with `terraform validate -no-color`.
 4. Run `tfsec` for a security scan.
 7. Sets up `Sonarqube` Runs the `SonarQube scanning` and `Sonar quality gate check`
@@ -474,4 +474,3 @@ The `plan_or_apply` job has several steps:
 7. If the apply fails, post the apply output to the GitHub PR.
 
 This workflow incorporates Terraform, Checkov, tfsec, and Infracost to validate, scan, and estimate the cost of infrastructure changes before being merged.
-

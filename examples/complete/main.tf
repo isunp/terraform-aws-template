@@ -3,5 +3,5 @@
 ################################################################################
 
 resource "null_resource" "example" {
-    ## define the module call or create supporting resources
+  ## define the module call or create supporting resources
 }
