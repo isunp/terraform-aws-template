@@ -1,7 +1,9 @@
 ################################################################################
-# Defines the resources provider
+# Argument Reference for the resources
 ################################################################################
 
-provider "aws" {
-  region = var.region
+variable "region" {
+  description = "Region be used for all the resources"
+  type        = string
+  default     = "us-east-1"
 }

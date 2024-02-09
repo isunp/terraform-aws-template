@@ -1,7 +1,7 @@
 ################################################################################
-# Defines the resources provider
+# Defines and manages the terraform resources
 ################################################################################
 
-provider "aws" {
-  region = var.region
+resource "null_resource" "example" {
+  ## define the module call or create supporting resources
 }

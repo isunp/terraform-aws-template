@@ -1,7 +1,7 @@
 ################################################################################
-# Input local variables
+# Defines the Attribute Reference created infrastructure
 ################################################################################
 
-environment = "dev"
-application = "adex-devops-competency"
-owner       = "adex"
+output "id" {
+  value = null_resource.example.id
+}
