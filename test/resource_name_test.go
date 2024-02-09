@@ -21,7 +21,7 @@ func TestTerraformExample(t *testing.T) {
 	terraformStateKey := os.Getenv("terraformS3Key")
 
 	rootFolder := "../"
-	terraformFolderRelativeToRoot := "examples/redis"
+	terraformFolderRelativeToRoot := "./examples/complete"
 	varFiles := []string{"dev.tfvars"}
 
 	tempTestFolder := testStructure.CopyTerraformFolderToTemp(t, rootFolder, terraformFolderRelativeToRoot)
