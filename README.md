@@ -1,5 +1,3 @@
-# Terraform default template module
-
 Terraform default template module is a useful starting point for those who frequently use Terraform for their projects. Its pre-written required files and format of code saves time and effort and provides a consistent structure for all Terraform projects.
 
 Our organization sets the best practices for creating the terraform template module. The following are the standards that should be followed by the team members and contributors
